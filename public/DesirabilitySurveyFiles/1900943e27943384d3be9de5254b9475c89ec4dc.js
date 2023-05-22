@@ -451,10 +451,80 @@ function generateSamples(arr, n, k) {
     for (let i = 0; i < n; i++) {
       samples.push(repeatedArray.slice(i * k, i * k + k));
     }
+    console.log(samples);
     return samples;
   }
 
   
+  function generateSamplesTwo(arr1, arr2, pre1, pre2, n, k) {
+    // Shuffle the input arrays separately
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+    
+    shuffle(arr1);
+    shuffle(arr2);
+
+    //console.log(arr1);
+
+    arr1 = arr1.map((x) => { return {filename: pre1 + x.filename}});
+    arr2 = arr2.map((x) => { return {filename: pre2 + x.filename}});
+    
+    // Repeat the shuffled arrays enough times to have at least n * k elements
+    // const repeatedArray1 = repeatArray(arr1, n * k / 2);
+    // const repeatedArray2 = repeatArray(arr2, n * k / 2);
+
+
+    var isDuplicate = arr1.some(function(item, idx){ 
+        return arr1.indexOf(item) != idx 
+    });
+
+    var isDuplicate2 = arr2.some(function(item, idx){ 
+        return arr2.indexOf(item) != idx 
+    });
+
+    console.log(isDuplicate, isDuplicate2);
+
+
+    console.log(arr1);
+    console.log(arr2);
+
+        //console.log(arr2);
+    
+    // // Combine the repeated arrays
+    // const combinedArray = repeatedArray1.concat(repeatedArray2);
+    
+    // // Shuffle the combined array
+    // shuffle(combinedArray);
+    
+    // Split the combined array into n samples of k elements each
+    const samples = [];
+    for (let i = 0; i < n; i++) {
+        const sample = []
+        sample.push(arr1[i * k])
+        sample.push(arr2[i * k])
+        sample.push(arr1[i * k + 1])
+        sample.push(arr2[i * k + 1])
+        shuffle(sample);
+        samples.push(sample);
+    }
+    
+    console.log(samples);
+    return samples;
+  }
+  
+  // Helper function to repeat an array a certain number of times
+  function repeatArray(array, times) {
+    const repeatedArray = [];
+    for (let i = 0; i < times; i++) {
+      repeatedArray.push(...array);
+    }
+    return repeatedArray;
+  }
+
 
   function FYshuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -507,13 +577,13 @@ var plugin_4choice = (function (jspsych) {
       <div class="outer-container">
       
         <div class="container">
-          <img decoding="async" src="${trial.filepathprefix + trial.stimuli[0].filename}" class="image" id="0">
-          <img decoding="async" src="${trial.filepathprefix + trial.stimuli[1].filename}" class="image" id="1">
+          <img decoding="async" src="${(trial.filepathprefix ? trial.filepathprefix : '') + trial.stimuli[0].filename}" class="image" id="0">
+          <img decoding="async" src="${(trial.filepathprefix ? trial.filepathprefix : '') + trial.stimuli[1].filename}" class="image" id="1">
         </div>
 
         <div class="container">
-          <img decoding="async" src="${trial.filepathprefix + trial.stimuli[2].filename}" class="image" id="2">
-          <img decoding="async" src="${trial.filepathprefix + trial.stimuli[3].filename}" class="image" id="3">      
+          <img decoding="async" src="${(trial.filepathprefix ? trial.filepathprefix : '') + trial.stimuli[2].filename}" class="image" id="2">
+          <img decoding="async" src="${(trial.filepathprefix ? trial.filepathprefix : '') + trial.stimuli[3].filename}" class="image" id="3">      
         </div>
         
         <div>
@@ -553,7 +623,34 @@ var plugin_4choice = (function (jspsych) {
           nextbutton_element.removeAttribute("disabled");
         });
       });
+
+      /**
+         * Simulate a click event.
+         * @public
+         * @param {Element} elem  the element to simulate a click on
+         */
+        var simulateClick = function (elem) {
+            // Create our event (with options)
+            var evt = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+            // If cancelled, don't dispatch our event
+            var canceled = !elem.dispatchEvent(evt);
+        };
+
+        //var nextbutton_element = document.getElementById("nextButton");
+        var keyup = document.addEventListener('keydown', e => {
+            if (e.repeat) return;
+            if (e.key === 'Enter') {
+                console.log('wtf')
+                simulateClick(nextbutton_element);
+            }
+        }, {once: true});
+
       /*
+
       ===========================================
       */
 
@@ -585,6 +682,12 @@ var plugin_4choice = (function (jspsych) {
 
       const nextbutton_element = document.getElementById("nextButton");
       nextbutton_element.addEventListener("click", after_mouse_response);
+
+    //   document.addEventListener("key", function (e) {
+    //     if (e.code === "Enter") {  //checks whether the pressed key is "Enter"
+    //         after_mouse_response();
+    //     }
+    //   });
 
       /* // set up a keyboard event to respond only to the spacebar
       this.jsPsych.pluginAPI.getKeyboardResponse({
@@ -2308,6 +2411,303 @@ all_filenames=[
 "folder_9/orthographic front view, lamp design, glass, Microsoft, TikTok, immersive, profile, perfume, 3d printed --upbeta --v 54(1)2MJ.png",
 "folder_9/slender man lamp MJ.png"
 ];;
+
+const real_filenames = [
+    "wandlamp-steinhauer-feuilleter-brons-3398br-478x621.jpg",
+"1102_102433_0 (1).jpg",
+"1541GO-Jet_andmore-4-478x621.jpg",
+"1691_104475_0.jpg",
+"2447_104474_0.jpg",
+"2569_103123_0.jpg",
+"2570ZW-478x621.jpg",
+"2616br-dl.jpg",
+"2717ZW-478x621.jpg",
+"2724ZW-478x621.jpg",
+"2734ZW.jpg",
+"2752G.jpg",
+"2756_106723_0.jpg",
+"2820B-478x621.jpg",
+"2892_105375_0.jpg",
+"3088ZW-478x621.jpg",
+"3092ZW-478x621.jpg",
+"3094ST-1.jpg",
+"3230_102143_0.jpg",
+"3475_98150_0.jpg",
+"3497_103300_0.jpg",
+"3663_105664_0.jpg",
+"3862_103229_0.jpg",
+"4158_106237_0.jpg",
+"4422_102867_0.jpg",
+"5444_104768_0.jpg",
+"5878_102954_0.jpg",
+"6357_105875_0.jpg",
+"6450_98407_0.jpg",
+"6684br-dlh-600x779.jpg",
+"6885_102898_0.jpg",
+"7438_105459_0.jpg",
+"8520_105062_0.jpg",
+"8991_97981_0.jpg",
+"8995_104380_0.jpg",
+"9877_103907_0.jpg",
+"136110f.jpg",
+"136484e.jpg",
+"137179a.jpg",
+"137495.jpg",
+"137569d.jpg",
+"137688d.jpg",
+"137809.jpg",
+"137883.jpg",
+"138171.jpg",
+"138234_1.jpg",
+"138369_f.jpg",
+"138623.jpg",
+"138639.jpg",
+"138730a.jpg",
+"138732c.jpg",
+"138803a.jpg",
+"138826.jpg",
+"138863.jpg",
+"310748716_2_2.jpeg",
+"532303016-rtp-global-001_5_2_1.jpg",
+"533300616_1_2_1.jpg",
+"industrieel-wandlampje-scharnier.jpg",
+"stoere-muurlamp-wandlamp-brons-met-hout.jpg",
+"wandlamp-anne-light-home-holgarson-zwart-mat-transparant-grijs-plexi-2572zw-478x621.jpg",
+"wandlamp-light-living-montana-3539br-478x621.jpg",
+"wandlamp-light-living-pavas-3538go-2-478x621.jpg",
+"wandlamp-scandinavisch-galgje-495x643.jpg",
+    "1146_103543_0.jpg",
+"1325G-20-478x621.jpg",
+"1348_104011_0.jpg",
+"1470BR.jpg",
+"1480_105764_0.jpg",
+"1488_105768_0.jpg",
+"1612_106041_0.jpg",
+"1706_98924_0.jpg",
+"1724_103125_0.jpg",
+"1785_105023_0.jpg",
+"2074_102358_0.jpg",
+"2096_104971_0.jpg",
+"2425BE-478x621.jpg",
+"2460_103081_0.jpg",
+"2557ZW-1-478x621.jpg",
+"2558ZW-478x621.jpg",
+"2560ZW.jpg",
+"2569ZW-478x621.jpg",
+"2659ZW.jpg",
+"2664ST.jpg",
+"2665A-478x621.jpg",
+"2666A-1-478x621.jpg",
+"2681ZW-478x621.jpg",
+"2707ZW-478x621.jpg",
+"2731ZW-1-478x621.jpg",
+"2742BR-478x621.jpg",
+"2744BR-478x621.jpg",
+"2788GO-478x621.jpg",
+"2827_106038_0.jpg",
+"2830B-478x621.jpg",
+"2832BR-478x621.jpg",
+"2833ZW-478x621.jpg",
+"2863_103303_0.jpg",
+"2897RZ-478x621.jpg",
+"2913ZW-478x621.jpg",
+"2918ZW-478x621.jpg",
+"2923GO-478x621.jpg",
+"2958B-478x628.jpg",
+"2982ZW-478x621.jpg",
+"2989ST-1-478x621.jpg",
+"3058W-478x621.jpg",
+"3090ZW-478x621.jpg",
+"3091ZW-478x621.jpg",
+"3104ZW-478x621.jpg",
+"3105CH-478x621.jpg",
+"3110W-478x621.jpg",
+"3116ZW-1-478x621.jpg",
+"3117ZW.jpg",
+"3121ZW.jpg",
+"3127ZW-478x621.jpg",
+"3129_99122_0.jpg",
+"3130BE-478x621.jpg",
+"3144_98804_0.jpg",
+"3161_104762_0.jpg",
+"3230ZW-478x621.jpg",
+"3236ZW-478x621.jpg",
+"3240ZW-478x621.jpg",
+"3240ZW-K6025VS-Lisannevandeklift-4-478x621.jpg",
+"3246ZW-478x621.jpg",
+"3300BR-478x621.jpg",
+"3306BR-478x621.jpg",
+"3373ST.jpg",
+"3374ZW-478x621.jpg",
+"3469ZW-478x621.jpg",
+"3477ZW-478x621.jpg",
+"3512_103811_0.jpg",
+"3837_105507_0.jpg",
+"3998_102918_0.jpg",
+"4159_103190_0.jpg",
+"4474_102204_0.jpg",
+"4542_106367_0.jpg",
+"4647_98930_0.jpg",
+"4721_105933_0.jpg",
+"4744_105977_0.jpg",
+"4766_106752_0.jpg",
+"4925_103986_0.jpg",
+"5114_103489_0.jpg",
+"5177_98917_0.jpg",
+"5293_106063_0.jpg",
+"5306_98889_0.jpg",
+"5350_106502_0.jpg",
+"5442_105422_0.jpg",
+"5473_104484_0.jpg",
+"5508_106045_0.jpg",
+"5895BR-14.jpg",
+"6298_104828_0.jpg",
+"6524_104276_0.jpg",
+"6736_102120_0.jpg",
+"6808_103236_0.jpg",
+"6838br-dlh.jpg",
+"6842st-dlh1.jpg",
+"6994_104767_0.jpg",
+"6998_103137_0.jpg",
+"7289_99001_0.jpg",
+"7311_103540_0.jpg",
+"7388_103619_0.jpg",
+"7401_103177_0.jpg",
+"7500-dl-hoofd-495x642.jpg",
+"7514_97211_0.jpg",
+"7530_104395_0.jpg",
+"7581_107133_0.jpg",
+"7632ZW-10-478x621.jpg",
+"7639_106102_0.jpg",
+"7676ZW-478x621.jpg",
+"7735BR-8-478x621.jpg",
+"7904_103509_0.jpg",
+"7930_102922_0.jpg",
+"8004_105025_0.jpg",
+"8041_103149_0.jpg",
+"8251_104908_0.jpg",
+"8377_103238_0.jpg",
+"8456_98368_0.jpg",
+"8670_102513_0.jpg",
+"8855_104836_0.jpg",
+"9018_98299_0.jpg",
+"9033_102511_0.jpg",
+"9326_106578_0.jpg",
+"9878ZW-478x621.jpg",
+"9893_103191_0.jpg",
+"10112RZ-2-scaled-478x621.jpg",
+"128701c.jpg",
+"136027.jpg",
+"136511.jpg",
+"136567c.jpg",
+"136956.jpg",
+"136975.jpg",
+"137071.jpg",
+"137280-1.jpg",
+"137298.jpg",
+"137430-d.jpg",
+"137499.jpg",
+"137539.jpg",
+"137564.jpg",
+"137572.jpg",
+"137681.jpg",
+"137848.jpg",
+"137852.jpg",
+"137868a.jpg",
+"137940.jpg",
+"137982_1.jpg",
+"138033.jpg",
+"138174.jpg",
+"138232.jpg",
+"138309_g.jpg",
+"138338a_1.jpg",
+"138340a.jpg",
+"138351.jpg",
+"138364_c.jpg",
+"138368.jpg",
+"138372_1.jpg",
+"138374.jpg",
+"138379.jpg",
+"138394.jpg",
+"138395f.jpg",
+"138424.jpg",
+"138439a.jpg",
+"138440a.jpg",
+"138442.jpg",
+"138443a.jpg",
+"138446_1.jpg",
+"138569a.jpg",
+"138600.jpg",
+"138602a_1.jpg",
+"138608a.jpg",
+"138620.jpg",
+"138633.jpg",
+"138636b.jpg",
+"138683a.jpg",
+"138690.jpg",
+"138701.jpg",
+"138702.jpg",
+"138703e.jpg",
+"138704e.jpg",
+"138722a.jpg",
+"138819d.jpg",
+"138823.jpg",
+"146101-brenda-tafellamp-witzilver-1xled-3000k-004.jpg",
+"155651-bishade-tl-1-chroomzwart-1xe27-004.jpg",
+"155720-soprana-bow-sl-1-zwart-1xe27-004.jpg",
+"155733-soprana-tripod-wit-scherm-e27-001-640x480.jpg",
+"155840-soprana-oval-chroomzwart-1xe27-004.jpg",
+"156277-vincelli-2-tl-bamboe-donker-1xled-2700k-004.jpg",
+"157000-i-line-touch-zwart-1xled-3000k-1xled-3500k-004.jpg",
+"1001415-degano-35-draagbare-accu-lamp-1xled-3000k-004.jpg",
+"3736330li_lirio.jpg",
+"360541716_1_1.jpg",
+"362281710_massive_achilles.jpg",
+"372145616-rtp-global-001.jpg",
+"379988616-a2p-global-001.jpg",
+"422613016_2.jpg",
+"431333016_1_1.jpg",
+"432688616_1.jpg",
+"532313016_3.jpg",
+"667153016-rtp-global-001_1_1.jpg",
+"692258716-rtp-global-001.jpg",
+"Betonlook-vloerlamp-7633GR-478x621.jpg",
+"bollamp-met-houten-onderkant-7932BE.jpg",
+"bronzen-tafellamp-klassiek-600x779.jpg",
+"Doorzichtige-voetbal-lamp-3-478x621.jpg",
+"Filmlamp-op-statief-1577ZW-478x621.jpg",
+"Goudkleurige-vloerlamp-interiorbyrahime-1951GO-18-478x478.jpg",
+"Grijze-vloerlamp-1322GR-478x621.jpg",
+"houten-tafellamp-1-495x642.jpg",
+"Langwerpig-kooilampje-zwart-478x621.jpg",
+"lm1314_leitmotiv.jpg",
+"staande-lamp.jpg",
+"stoere-gaaslamp-tafellamp-staalkleurig-verweerde-look_1-495x643.jpg",
+"stoere-tafellamp-bureaulamp-roest-look-495x643.jpg",
+"stoere-vintage-bureaulamp-495x643.jpg",
+"stoere-vloerlamp-industrieel_2-495x643.jpg",
+"tafellamp-3456zw.jpg",
+"tafellamp-light-living-aleso-3548br-2-478x621.jpg",
+"tafellamp-light-living-liva-2960go.jpg",
+"tafellamp-light-living-palmtree-3545br-478x621.jpg",
+"tafellamp-light-living-rakel-3519br-478x621.jpg",
+"tafellamp-mexlite-carre-mat-zwart-3380zw-478x621.jpg",
+"tafellamp-steinhauer-ambiance-messing-3401me-478x621.jpg",
+"tafellamp-steinhauer-ancilla-geborsteld-brons-met-wit-glas-3100br-478x621.jpg",
+"tafellamp-steinhauer-spring-groen-3391g-478x621.jpg",
+"thumbnail_512.jfif",
+"vloerlamp-grijs-zilver-478x621.jpg",
+"vloerlamp-light-living-plumeria-3525zw-478x621.jpg",
+"vloerlamp-mexlite-bella-3407st-478x621.jpg",
+"vloerlamp-mexlite-sunflower-goud-en-zwart-3664zw-478x621.jpg",
+"vloerlamp-steinhauer-soleil-staal-geborsteld-mat-glas-3258st.jpg",
+"vloerlamp-steinhauer-stang-mat-zwart-3349zw-478x621.jpg",
+"Zwarte-driepoot-vloerlamp-met-draadkap-478x621.jpg",
+"zwarte-industriele-vloerlamp-met-kap-2132ZW-478x621.jpg",
+"zwarte-stoere-bureaulamp-495x642.jpg",
+"zwarte-uplight-met-leeslamp-2107ZW.jpg",
+"Zwarte-vloerlamp-driepoot-478x621.jpg"
+];
 // data will not be saved
 
 function run_nchoice_training(n_trials, imagesPerTrial) {
@@ -2410,7 +2810,10 @@ function run_nchoice_training(n_trials, imagesPerTrial) {
 
         ffnames = ffnames.map(filename => {return filename.replace(/[\s,()]/g, "_");});
         ffnames = ffnames.concat(train_filenames);
+
+  
         image_abs_paths = ffnames.map(i => a_filepathprefix + i);
+
         var preload = {
             type: jsPsychPreload,
             images: image_abs_paths, 
@@ -2422,8 +2825,8 @@ function run_nchoice_training(n_trials, imagesPerTrial) {
         jsPsych.run(timeline);
     
     }); // end of promise
-    }// end of function;
-function run_nchoice_experiment(n_trials, imagesPerTrial, ffp) {
+}// end of function;
+function run_nchoice_experiment(n_trials, imagesPerTrial) {
     const jsPsych = initJsPsych({
         show_progress_bar: true,
     });
@@ -2434,11 +2837,16 @@ function run_nchoice_experiment(n_trials, imagesPerTrial, ffp) {
     var internal_PID = String(Math.ceil(Math.random()*100000));
 
     const a_filepathprefix = "https://ik.imagekit.io/rndres1/dinou/";
+    const b_filepathprefix = "https://ik.imagekit.io/3jkm0bklz/";
+
     const modulePath = window.location.pathname.split('/')[1];
     const this_config = moduleConfig['desirability'];
     document.title = this_config.pagetitle;
 
     // no need to parse ffp, it is passed as parameter from training_nchoice
+
+    ffp = Math.ceil(Math.random() * 5);
+
     switch (ffp) {
         case 1:
             files_used = all_filenames.slice(0, 336);
@@ -2457,6 +2865,7 @@ function run_nchoice_experiment(n_trials, imagesPerTrial, ffp) {
             break;
     }
     files_used = files_used.map(filename => {return filename.replace(/[\s,()]/g, "_");});
+    const files_used_two = real_filenames.map(filename => {return filename.replace(/[\s,()]/g, "_");});
     console.log(files_used.length);
     
     const msg_attcheck = "choose the image on the top right";
@@ -2507,10 +2916,11 @@ function run_nchoice_experiment(n_trials, imagesPerTrial, ffp) {
             ffp: ffp,
             experiment_dimension: modulePath // desirability, novelty etc.
         };
-        senddata = JSON.stringify(senddata);
+        senddata = JSON.stringify({data: [senddata]});
         var xhr = new XMLHttpRequest();
-        ntl_URL = window.location.origin + "/.netlify/functions/savedata";
+        ntl_URL = "https://sheetdb.io/api/v1/cwqsq8dse0bj7";
         xhr.open('POST', ntl_URL, true);
+        xhr.setRequestHeader('Accept', 'application/json');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onload = function() {
         if(xhr.status == 200){
@@ -2526,7 +2936,9 @@ function run_nchoice_experiment(n_trials, imagesPerTrial, ffp) {
 
 
     stimObjects = files_used.map(parseFname);
-    trial_stimobjects = generateSamples(stimObjects, n_trials, imagesPerTrial);
+    const stimObjectsTwo = files_used_two.map(parseFname);
+    
+    trial_stimobjects = generateSamplesTwo(stimObjects, stimObjectsTwo, a_filepathprefix, b_filepathprefix, n_trials, imagesPerTrial);
     console.log(trial_stimobjects.length);
 
     timeline = [];
@@ -2536,7 +2948,7 @@ function run_nchoice_experiment(n_trials, imagesPerTrial, ffp) {
         var trial1 = {
             type: plugin_4choice, 
             stimuli: stim_thistrial,
-            filepathprefix: a_filepathprefix,
+            //filepathprefix: a_filepathprefix,
             instruction: "",
             alignPrompt: this_config.alignPrompt
         }
@@ -2616,8 +3028,8 @@ function run_nchoice_experiment(n_trials, imagesPerTrial, ffp) {
     timeline.unshift(demographic_q_trial);
     
     // data saving and attention checks at equally spaced locations
-    insertElement(timeline, trial_attentionCheck, 4);
-    insertElement(timeline, data_save_trial, 4);
+    // insertElement(timeline, trial_attentionCheck, 1);
+    // insertElement(timeline, data_save_trial, 1);
     
     // at the end, show questionnaire, save data, and display thankyou message
     timeline.push(psq_trial);

@@ -59,16 +59,10 @@
 
     <script>
         
-        n_trials = 100;
+        n_trials = 20;
         nImg = 4;
 
-        run_nchoice_training(4, nImg) 
-        .then((ffp) => {
-            run_nchoice_experiment(n_trials, nImg, ffp);
-        })
-        .catch((error) => {
-            console.error("Error ", error);
-        });
+        run_nchoice_experiment(n_trials, nImg)
 
     </script>
 
@@ -77,7 +71,14 @@
             <div class=".survey-questions-text">
             <p>
             You are being invited to participate in a research study titled “Generative AI and Tangible Products: Human-AI Design of 3D-printed lamps”. This study is being done by Dinuo LIAO from the TU Delft as a master's student.
-            </p><div class="jspsych-instructions-nav" style="padding: 10px 0px;"><button id="jspsych-instructions-back" class="jspsych-btn" style="margin-right: 5px;" disabled="disabled">&lt; Previous</button><button id="jspsych-instructions-next" class="jspsych-btn" style="margin-left: 5px;">Next &gt;</button></div></div></div></div></body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+            </p><div class="jspsych-instructions-nav" style="padding: 10px 0px;"><button id="jspsych-instructions-back" class="jspsych-btn" style="margin-right: 5px;" disabled="disabled">&lt; Previous</button><button id="jspsych-instructions-next" class="jspsych-btn" style="margin-left: 5px;">Next &gt;</button></div></div></div></div></body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open">
+              <style>
+
+                #nextButton {
+                  position: fixed;
+                  right: 200px;
+                  top: 50%;
+                }
   div.grammarly-desktop-integration {
     position: absolute;
     width: 1px;
